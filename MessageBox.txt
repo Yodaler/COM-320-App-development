@@ -1,0 +1,18 @@
+COM 320 Message Box code
+
+field_goal = attempts/made
+three_point = attempts_three/made_three   //placeholder variable names
+free_throw = ft_attempts/ft_made
+
+
+
+GUI asking for those inputs
+
+
+
+MessageBox.Show(
+		string.Format("Your field goal percentage is: {0}", field_goal),
+		string.Format("Your three point field goal percentage is: {0}", three_point),
+		string.Format("Your free throw percentage is: {0}", free_throw),
+		MessageBoxButtons.OK);
+
