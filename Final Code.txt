@@ -1,0 +1,224 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace BasketballApp
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private const int mSize = 7;
+        private double[] fgPercent = new double[mSize];
+        private double[] ftPercent = new double[mSize];
+        private double[] tpPercent = new double[mSize];
+        private string[] date = new string [mSize];
+        private int index = 0;
+        private void DisplayMessageOK(string message)
+        {
+            MessageBox.Show(message, Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private bool ValidateInput()
+        {   //declare varaibles
+            int amount;
+
+            //Validate User's input
+
+            //Type Check 
+            if (int.TryParse(txtFieldGoalMade.Text, out amount) == false)
+            {
+                DisplayMessageOK("Please enter a integer number in Field Goal Made Ex:1,2,3...");    //inform the user
+                txtFieldGoalMade.Focus();     //set focus
+                return false;   //return false
+            }
+
+            if (int.TryParse(txtFieldGoalAttempted.Text, out amount) == false)
+            {
+                DisplayMessageOK("Please enter a integer number in Field Goal Attempted Ex:1,2,3...");    //inform the user
+                txtFieldGoalAttempted.Focus();     //set focus
+                return false;   //return false
+            }
+
+            if (int.TryParse(txtThreePointMade.Text, out amount) == false)
+            {
+                DisplayMessageOK("Please enter a integer number in Three Point Made Ex:1,2,3...");    //inform the user
+                txtThreePointMade.Focus();     //set focus
+                return false;   //return false
+            }
+
+            if (int.TryParse(txtThreePointAttempted.Text, out amount) == false)
+            {
+                DisplayMessageOK("Please enter a integer number in Three Point Attempted Ex:1,2,3...");    //inform the user
+                txtThreePointAttempted.Focus();     //set focus
+                return false;   //return false
+            }
+
+            if (int.TryParse(txtFreeThrowMade.Text, out amount) == false)
+            {
+                DisplayMessageOK("Please enter a integer number in Free Throw Made Ex:1,2,3...");    //inform the user
+                txtFreeThrowMade.Focus();     //set focus
+                return false;   //return false
+            }
+
+            if (int.TryParse(txtFreeThrowAttempted.Text, out amount) == false)
+            {
+                DisplayMessageOK("Please enter a integer number in Free Throw Attempted Ex:1,2,3...");    //inform the user
+                txtFreeThrowAttempted.Focus();     //set focus
+                return false;   //return false
+            }
+
+            //check if array is full
+            if(mSize == index)
+            {
+                DisplayMessageOK("Array is full");
+                return false;
+            }
+
+            //check if made shots are bigger than attempted shots
+            if (int.Parse(txtFieldGoalMade.Text) > int.Parse(txtFieldGoalAttempted.Text))
+            {
+                DisplayMessageOK("Attempted shots must be bigger than made shots");
+                txtFieldGoalAttempted.Focus();
+                return false;
+            }
+
+            if (int.Parse(txtThreePointMade.Text) > int.Parse(txtThreePointAttempted.Text))
+            {
+                DisplayMessageOK("Attempted shots must be bigger than made shots");
+                txtThreePointAttempted.Focus();
+                return false; 
+            }
+
+            if (int.Parse(txtFreeThrowMade.Text) > int.Parse(txtFreeThrowAttempted.Text))
+            {
+                DisplayMessageOK("Attempted shots must be bigger than made shots");
+                txtFreeThrowAttempted.Focus();
+                return false;
+            }
+
+            //If all input is valid then return true
+            else
+            {
+                return true;
+            }
+        }
+
+        //Helper function to clear all fields
+        private void ClearAll()
+        {
+            txtFieldGoalAttempted.Clear();
+            txtFieldGoalMade.Clear();
+            txtFreeThrowAttempted.Clear();
+            txtFreeThrowMade.Clear();
+            txtThreePointAttempted.Clear();
+            txtThreePointMade.Clear();
+            lstOutput.Items.Clear();
+            txtFieldGoalMade.Focus();
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            ClearAll();
+        } 
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnEnter_Click(object sender, EventArgs e)
+        {
+            //Validation Check
+            if (ValidateInput() == false)
+            {
+                return;
+            }
+
+
+            //declare and store values
+            double fgPercentCalculation = ((double.Parse(txtFieldGoalMade.Text) / double.Parse(txtFieldGoalAttempted.Text)) * 100);
+            double fgPercentRounded = Math.Round(fgPercentCalculation, 2);
+            
+            double ftPercentCalculation = ((double.Parse(txtFreeThrowMade.Text) / double.Parse(txtFreeThrowAttempted.Text)) * 100);
+            double ftPercentRounded = Math.Round(ftPercentCalculation, 2);
+            
+            double tpPercentCalculation = ((double.Parse(txtThreePointMade.Text) / double.Parse(txtThreePointAttempted.Text)) * 100);
+            double tpPercentRounded = Math.Round(tpPercentCalculation, 2);
+
+            string dateSelection = dateTimePicker1.Value.ToString("MM-dd-yyyy");
+
+            
+            //enter values to corresponding arrays
+            fgPercent[index] = fgPercentRounded;
+            ftPercent[index] = ftPercentRounded;
+            tpPercent[index] = tpPercentRounded;
+            date[index] = dateSelection;
+
+            //increase array element
+            index++;
+
+            //display stats are entered
+            lstOutput.Items.Add("Stats Entered");
+        }
+
+        private void btnStats_Click(object sender, EventArgs e)
+        {
+            //Clears Output
+            ClearAll();
+
+            //Declare Variables
+            int i;
+            string dateDisplay = "Date";
+            string fg = "FG%";
+            string ft = "FT%";
+            string tp = "3-Point%";
+            
+            //Display Output
+            lstOutput.Items.Add(dateDisplay.PadRight(15) + fg.PadLeft(5) + "\t" + tp + "\t" + ft);
+            lstOutput.Items.Add("-------------------------------------------------------------------");
+            for(i=0; i < mSize; i++)
+            {
+                lstOutput.Items.Add(date[i] + fgPercent[i].ToString().PadLeft(6) + "\t" + tpPercent[i].ToString() + "\t" + ftPercent[i].ToString());
+            }
+        }
+
+        private void btnAverage_Click(object sender, EventArgs e)
+        {
+            //Clear Output
+            ClearAll();
+
+            //Declare Variables
+            int cnt;
+            double fgPercentSum = 0;
+            double tpPercentSum = 0;
+            double ftPercentSum = 0;
+
+            //Sum Percentages
+            for (cnt = 0; cnt < mSize; cnt++)
+            {
+                fgPercentSum = fgPercentSum + fgPercent[cnt];
+                tpPercentSum = tpPercentSum + tpPercent[cnt];
+                ftPercentSum = ftPercentSum + ftPercent[cnt];
+            }
+
+            //Calculate Averages
+            double fgAvgPercent = Math.Round(fgPercentSum / 7.0, 2);
+            double tpAvgPercent = Math.Round(tpPercentSum / 7.0, 2);
+            double ftAvgPercent = Math.Round(ftPercentSum / 7.0, 2);
+
+            //Display Averages
+            lstOutput.Items.Add("FG% Average".PadRight(11) + "\t3-Point% Average \t FT% Average");
+            lstOutput.Items.Add("-----------------------------------------------------------------------------------------------");
+            lstOutput.Items.Add(fgAvgPercent.ToString().PadRight(11) +"\t\t" + tpAvgPercent.ToString() +"\t\t" + ftAvgPercent.ToString());
+        }
+    }
+}
